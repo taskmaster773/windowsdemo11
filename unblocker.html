@@ -212,17 +212,14 @@
         /* Browser Content */
         .browser-content {
             flex: 1;
-            overflow: hidden;
+            overflow: auto;
             background: #0d0d0d;
             position: relative;
         }
 
-        .proxy-content {
+        .proxy-content-wrapper {
             width: 100%;
             height: 100%;
-            border: none;
-            display: block;
-            overflow: auto;
         }
 
         .loading-indicator {
@@ -405,7 +402,7 @@
                     <div class="error-message" id="errorMessage"></div>
                     <button class="error-close" onclick="closeError()">Close</button>
                 </div>
-                <div class="proxy-content" id="proxyContent"></div>
+                <div class="proxy-content-wrapper" id="proxyContentWrapper"></div>
             </div>
 
             <!-- Status Bar -->
@@ -417,12 +414,13 @@
 
     <script>
         const urlInput = document.getElementById('urlInput');
-        const proxyContent = document.getElementById('proxyContent');
+        const proxyContentWrapper = document.getElementById('proxyContentWrapper');
         const loadingIndicator = document.getElementById('loadingIndicator');
         const errorContainer = document.getElementById('errorContainer');
         const errorMessage = document.getElementById('errorMessage');
         const statusText = document.getElementById('statusText');
         const historyContainer = document.getElementById('historyContainer');
+        const browserContent = document.getElementById('browserContent');
 
         // Multiple proxy services with fallbacks
         const PROXIES = [
@@ -432,7 +430,7 @@
         ];
 
         let history = JSON.parse(localStorage.getItem('unblockerHistory')) || [];
-        let currentProxyIndex = 0;
+        let currentURL = '';
 
         function formatURL(input) {
             if (!input.trim()) return '';
@@ -504,6 +502,7 @@
                 return;
             }
 
+            currentURL = url;
             closeError();
             showLoading(true);
             statusText.textContent = `📡 Fetching: ${url}`;
@@ -516,7 +515,7 @@
                 showLoading(false);
                 showError(
                     'All Proxies Failed',
-                    'Unable to reach the website through any available proxy. The site may be heavily restricted.'
+                    'Unable to reach the website. The site may be heavily restricted or blocked.'
                 );
                 return;
             }
@@ -527,7 +526,9 @@
                 method: 'GET',
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-                }
+                },
+                mode: 'cors',
+                credentials: 'omit'
             })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -536,32 +537,56 @@
             .then(html => {
                 showLoading(false);
                 
-                // Create a sandboxed environment for the content
-                proxyContent.innerHTML = '';
+                // Clear previous content
+                proxyContentWrapper.innerHTML = '';
                 
-                const iframe = document.createElement('iframe');
-                iframe.className = 'proxy-content';
-                iframe.sandbox.add('allow-same-origin');
-                iframe.sandbox.add('allow-scripts');
-                iframe.sandbox.add('allow-forms');
-                iframe.sandbox.add('allow-popups');
-                iframe.sandbox.add('allow-top-navigation');
+                // Create a container for the content
+                const contentContainer = document.createElement('div');
+                contentContainer.style.cssText = `
+                    width: 100%;
+                    height: 100%;
+                    overflow: auto;
+                    padding: 20px;
+                    background: #0d0d0d;
+                    color: #ffffff;
+                `;
                 
-                proxyContent.appendChild(iframe);
-                
-                // Modify HTML to fix relative links
+                // Create wrapper to fix relative URLs and styles
                 const baseTag = `<base href="${url}">`;
-                const modifiedHTML = baseTag + html;
+                const style = `<style>
+                    body { background: #0d0d0d; color: #ffffff; }
+                    * { max-width: 100%; }
+                    img, video, iframe { max-width: 100%; height: auto; }
+                </style>`;
                 
-                iframe.contentDocument.open();
-                iframe.contentDocument.write(modifiedHTML);
-                iframe.contentDocument.close();
+                const wrappedHTML = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        ${baseTag}
+                        ${style}
+                    </head>
+                    <body>
+                        ${html}
+                    </body>
+                    </html>
+                `;
+                
+                // Parse and display the HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(wrappedHTML, 'text/html');
+                
+                // Clone the body content
+                const bodyContent = doc.body;
+                contentContainer.appendChild(bodyContent);
+                
+                proxyContentWrapper.appendChild(contentContainer);
                 
                 statusText.textContent = `✅ Loaded: ${url}`;
                 addToHistory(url);
             })
             .catch(error => {
-                console.log(`Proxy ${proxyIndex + 1} failed, trying next...`);
+                console.log(`Proxy ${proxyIndex + 1} failed:`, error.message);
                 loadWithProxy(url, proxyIndex + 1);
             });
         }
