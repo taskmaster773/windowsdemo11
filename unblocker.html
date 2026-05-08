@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Unblocker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-bottom: 2px solid #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 32px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* URL Input Section */
+        .url-input-section {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .url-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .url-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .go-btn {
+            padding: 12px 30px;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            min-width: 100px;
+        }
+
+        .go-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .go-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Browser Container */
+        .browser-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .browser-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .browser-content {
+            flex: 1;
+            overflow: auto;
+            background: #0d0d0d;
+            position: relative;
+        }
+
+        .proxy-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .loading-indicator {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            display: none;
+            color: #ffffff;
+            font-size: 14px;
+            z-index: 100;
+        }
+
+        .loading-indicator.active {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: rgba(0, 0, 0, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 30px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Error Message */
+        .error-container {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+            z-index: 200;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .error-container.active {
+            display: block;
+        }
+
+        .error-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .error-message {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .error-close {
+            padding: 10px 20px;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .error-close:hover {
+            background: #e0e0e0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 2px solid #ffffff;
+            padding: 20px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .sidebar.active {
+            display: block;
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .history-item {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 12px;
+            word-break: break-all;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .input-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .title {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">🔓</div>
+            <div class="title">WEB UNBLOCKER</div>
+        </div>
+    </div>
+
+    <!-- URL Input -->
+    <div class="url-input-section">
+        <div class="input-container">
+            <input 
+                type="text" 
+                class="url-input" 
+                id="urlInput" 
+                placeholder="Enter URL (e.g., https://example.com)"
+                autocomplete="off"
+            >
+            <button class="go-btn" onclick="loadPage()">GO 🚀</button>
+        </div>
+    </div>
+
+    <!-- Browser Container -->
+    <div class="browser-container">
+        <div class="browser-main">
+            <div class="browser-content">
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <span>Loading...</span>
+                </div>
+                <div class="error-container" id="errorContainer">
+                    <div class="error-title">⚠️ Error</div>
+                    <div class="error-message" id="errorMessage"></div>
+                    <button class="error-close" onclick="closeError()">Close</button>
+                </div>
+                <iframe class="proxy-frame" id="proxyFrame" title="Proxy Content"></iframe>
+            </div>
+            <div class="status-bar">
+                <span id="statusText">Ready • Enter a URL to begin</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const proxyFrame = document.getElementById('proxyFrame');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const errorContainer = document.getElementById('errorContainer');
+        const errorMessage = document.getElementById('errorMessage');
+        const statusText = document.getElementById('statusText');
+
+        // Public proxy service - Allorigins
+        const PROXY_API = 'https://api.allorigins.win/raw?url=';
+
+        function formatURL(input) {
+            if (!input.trim()) return '';
+            
+            // Add protocol if missing
+            if (!input.startsWith('http://') && !input.startsWith('https://')) {
+                return 'https://' + input;
+            }
+            return input;
+        }
+
+        function showError(title, message) {
+            errorMessage.textContent = message;
+            errorContainer.classList.add('active');
+            statusText.textContent = '❌ Error: ' + message;
+        }
+
+        function closeError() {
+            errorContainer.classList.remove('active');
+        }
+
+        function showLoading(show) {
+            if (show) {
+                loadingIndicator.classList.add('active');
+                statusText.textContent = '⏳ Loading...';
+            } else {
+                loadingIndicator.classList.remove('active');
+            }
+        }
+
+        function loadPage() {
+            const url = formatURL(urlInput.value);
+            
+            if (!url) {
+                showError('Invalid URL', 'Please enter a valid website URL');
+                return;
+            }
+
+            closeError();
+            showLoading(true);
+            statusText.textContent = `📡 Fetching: ${url}`;
+
+            try {
+                const proxyURL = PROXY_API + encodeURIComponent(url);
+                
+                // Create a new iframe to load the proxied content
+                const newFrame = document.createElement('iframe');
+                newFrame.className = 'proxy-frame';
+                newFrame.title = 'Proxy Content';
+                
+                newFrame.onload = () => {
+                    showLoading(false);
+                    statusText.textContent = `✅ Loaded: ${url}`;
+                };
+
+                newFrame.onerror = () => {
+                    showLoading(false);
+                    showError(
+                        'Failed to Load',
+                        'The website could not be accessed. It may be blocked or unavailable.'
+                    );
+                };
+
+                // Set timeout for slow connections
+                const timeoutId = setTimeout(() => {
+                    showLoading(false);
+                    showError(
+                        'Connection Timeout',
+                        'The request took too long. Try again or use a different URL.'
+                    );
+                }, 15000);
+
+                newFrame.onload = () => {
+                    clearTimeout(timeoutId);
+                    showLoading(false);
+                    statusText.textContent = `✅ Loaded: ${url}`;
+                };
+
+                newFrame.src = proxyURL;
+                
+                // Replace old frame
+                proxyFrame.replaceWith(newFrame);
+                document.getElementById('proxyFrame').remove();
+                const browserContent = document.querySelector('.browser-content');
+                browserContent.appendChild(newFrame);
+                
+            } catch (error) {
+                showLoading(false);
+                showError('Error', error.message);
+            }
+        }
+
+        // Allow Enter key to load
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loadPage();
+            }
+        });
+
+        // Focus on load
+        window.addEventListener('load', () => {
+            urlInput.focus();
+        });
+
+        // Set initial status
+        statusText.textContent = '🚀 Ready • Enter a URL to begin unblocking';
+    </script>
+</body>
+</html>
