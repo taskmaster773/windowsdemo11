@@ -21,6 +21,112 @@
             overflow: hidden;
         }
 
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.8);
+            border-right: 2px solid #ffffff;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #ffffff;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+        }
+
+        .feature-btn {
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .feature-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateX(5px);
+        }
+
+        .feature-btn:active {
+            transform: translateX(3px);
+        }
+
+        .feature-icon {
+            margin-right: 8px;
+        }
+
+        .history-item {
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            word-break: break-all;
+            transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }
+
+        .clear-history {
+            padding: 8px 12px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 5px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .clear-history:hover {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: rgba(255, 0, 0, 0.5);
+            color: #ffffff;
+        }
+
+        /* Main Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
         /* Header */
         .header {
             background: rgba(0, 0, 0, 0.6);
@@ -34,9 +140,6 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
         }
 
         .logo {
@@ -59,9 +162,6 @@
         .input-container {
             display: flex;
             gap: 10px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
         }
 
         .url-input {
@@ -109,20 +209,7 @@
             transform: translateY(0);
         }
 
-        /* Browser Container */
-        .browser-container {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-
-        .browser-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
+        /* Browser Content */
         .browser-content {
             flex: 1;
             overflow: auto;
@@ -183,14 +270,14 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             border: 2px solid #ffffff;
             border-radius: 10px;
             padding: 30px;
             max-width: 400px;
             text-align: center;
             z-index: 200;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
         }
 
         .error-container.active {
@@ -226,58 +313,12 @@
             background: #e0e0e0;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background: rgba(0, 0, 0, 0.4);
-            border-left: 2px solid #ffffff;
-            padding: 20px;
-            overflow-y: auto;
-            display: none;
-        }
-
-        .sidebar.active {
-            display: block;
-        }
-
-        .sidebar-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .history-item {
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 6px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 12px;
-            word-break: break-all;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .history-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .input-container {
-                flex-direction: column;
-            }
-
             .sidebar {
-                display: none;
+                width: 0;
+                padding: 0;
+                border: none;
             }
 
             .title {
@@ -287,32 +328,75 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
-        <div class="header-content">
-            <div class="logo">🔓</div>
-            <div class="title">WEB UNBLOCKER</div>
-        </div>
-    </div>
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <!-- Quick Features -->
+            <div class="sidebar-section">
+                <div class="sidebar-title">🚀 Quick Access</div>
+                <button class="feature-btn" onclick="loadPredefined('https://youtube.com')"><span class="feature-icon">▶️</span>YouTube</button>
+                <button class="feature-btn" onclick="loadPredefined('https://reddit.com')"><span class="feature-icon">📱</span>Reddit</button>
+                <button class="feature-btn" onclick="loadPredefined('https://twitter.com')"><span class="feature-icon">𝕏</span>Twitter/X</button>
+                <button class="feature-btn" onclick="loadPredefined('https://twitch.tv')"><span class="feature-icon">🎮</span>Twitch</button>
+                <button class="feature-btn" onclick="loadPredefined('https://discord.com')"><span class="feature-icon">💬</span>Discord</button>
+                <button class="feature-btn" onclick="loadPredefined('https://netflix.com')"><span class="feature-icon">🎬</span>Netflix</button>
+            </div>
 
-    <!-- URL Input -->
-    <div class="url-input-section">
-        <div class="input-container">
-            <input 
-                type="text" 
-                class="url-input" 
-                id="urlInput" 
-                placeholder="Enter URL (e.g., https://example.com)"
-                autocomplete="off"
-            >
-            <button class="go-btn" onclick="loadPage()">GO 🚀</button>
-        </div>
-    </div>
+            <!-- Tools -->
+            <div class="sidebar-section">
+                <div class="sidebar-title">⚙️ Tools</div>
+                <button class="feature-btn" onclick="copyCurrentURL()"><span class="feature-icon">📋</span>Copy URL</button>
+                <button class="feature-btn" onclick="goBack()"><span class="feature-icon">⬅️</span>Go Back</button>
+                <button class="feature-btn" onclick="goForward()"><span class="feature-icon">➡️</span>Go Forward</button>
+                <button class="feature-btn" onclick="reloadPage()"><span class="feature-icon">🔄</span>Refresh</button>
+            </div>
 
-    <!-- Browser Container -->
-    <div class="browser-container">
-        <div class="browser-main">
-            <div class="browser-content">
+            <!-- History -->
+            <div class="sidebar-section">
+                <div class="sidebar-title">📜 History</div>
+                <div id="historyContainer" style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.5); text-align: center;">No history yet</div>
+                </div>
+                <button class="clear-history" onclick="clearHistory()">Clear History</button>
+            </div>
+
+            <!-- Info -->
+            <div class="sidebar-section">
+                <div class="sidebar-title">ℹ️ Info</div>
+                <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); line-height: 1.6;">
+                    <p>🔓 <strong>Unblocker</strong></p>
+                    <p>Uses Allorigins public proxy API to bypass restrictions.</p>
+                    <p>📡 Fast & Reliable</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-area">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-content">
+                    <div class="logo">🔓</div>
+                    <div class="title">WEB UNBLOCKER</div>
+                </div>
+            </div>
+
+            <!-- URL Input -->
+            <div class="url-input-section">
+                <div class="input-container">
+                    <input 
+                        type="text" 
+                        class="url-input" 
+                        id="urlInput" 
+                        placeholder="Enter URL (e.g., https://example.com)"
+                        autocomplete="off"
+                    >
+                    <button class="go-btn" onclick="loadPage()">GO 🚀</button>
+                </div>
+            </div>
+
+            <!-- Browser Content -->
+            <div class="browser-content" id="browserContent">
                 <div class="loading-indicator" id="loadingIndicator">
                     <div class="spinner"></div>
                     <span>Loading...</span>
@@ -324,8 +408,10 @@
                 </div>
                 <iframe class="proxy-frame" id="proxyFrame" title="Proxy Content"></iframe>
             </div>
+
+            <!-- Status Bar -->
             <div class="status-bar">
-                <span id="statusText">Ready • Enter a URL to begin</span>
+                <span id="statusText">🚀 Ready • Enter a URL to begin unblocking</span>
             </div>
         </div>
     </div>
@@ -337,14 +423,15 @@
         const errorContainer = document.getElementById('errorContainer');
         const errorMessage = document.getElementById('errorMessage');
         const statusText = document.getElementById('statusText');
+        const historyContainer = document.getElementById('historyContainer');
 
         // Public proxy service - Allorigins
         const PROXY_API = 'https://api.allorigins.win/raw?url=';
+        let history = JSON.parse(localStorage.getItem('unblockerHistory')) || [];
 
         function formatURL(input) {
             if (!input.trim()) return '';
             
-            // Add protocol if missing
             if (!input.startsWith('http://') && !input.startsWith('https://')) {
                 return 'https://' + input;
             }
@@ -370,6 +457,40 @@
             }
         }
 
+        function addToHistory(url) {
+            if (!history.includes(url)) {
+                history.unshift(url);
+                if (history.length > 10) history.pop();
+                localStorage.setItem('unblockerHistory', JSON.stringify(history));
+                updateHistoryUI();
+            }
+        }
+
+        function updateHistoryUI() {
+            if (history.length === 0) {
+                historyContainer.innerHTML = '<div style="font-size: 12px; color: rgba(255, 255, 255, 0.5); text-align: center;">No history yet</div>';
+                return;
+            }
+
+            historyContainer.innerHTML = history.map((url, index) => 
+                `<div class="history-item" onclick="loadPredefined('${url}')" title="${url}">
+                    🕐 ${url.replace('https://', '').replace('http://', '').substring(0, 25)}...
+                </div>`
+            ).join('');
+        }
+
+        function clearHistory() {
+            history = [];
+            localStorage.removeItem('unblockerHistory');
+            updateHistoryUI();
+            statusText.textContent = '🗑️ History cleared';
+        }
+
+        function loadPredefined(url) {
+            urlInput.value = url;
+            loadPage();
+        }
+
         function loadPage() {
             const url = formatURL(urlInput.value);
             
@@ -385,25 +506,8 @@
             try {
                 const proxyURL = PROXY_API + encodeURIComponent(url);
                 
-                // Create a new iframe to load the proxied content
-                const newFrame = document.createElement('iframe');
-                newFrame.className = 'proxy-frame';
-                newFrame.title = 'Proxy Content';
+                proxyFrame.src = '';
                 
-                newFrame.onload = () => {
-                    showLoading(false);
-                    statusText.textContent = `✅ Loaded: ${url}`;
-                };
-
-                newFrame.onerror = () => {
-                    showLoading(false);
-                    showError(
-                        'Failed to Load',
-                        'The website could not be accessed. It may be blocked or unavailable.'
-                    );
-                };
-
-                // Set timeout for slow connections
                 const timeoutId = setTimeout(() => {
                     showLoading(false);
                     showError(
@@ -412,23 +516,55 @@
                     );
                 }, 15000);
 
-                newFrame.onload = () => {
+                proxyFrame.onload = () => {
                     clearTimeout(timeoutId);
                     showLoading(false);
                     statusText.textContent = `✅ Loaded: ${url}`;
+                    addToHistory(url);
                 };
 
-                newFrame.src = proxyURL;
-                
-                // Replace old frame
-                proxyFrame.replaceWith(newFrame);
-                document.getElementById('proxyFrame').remove();
-                const browserContent = document.querySelector('.browser-content');
-                browserContent.appendChild(newFrame);
+                proxyFrame.onerror = () => {
+                    clearTimeout(timeoutId);
+                    showLoading(false);
+                    showError(
+                        'Failed to Load',
+                        'The website could not be accessed. It may be blocked or unavailable.'
+                    );
+                };
+
+                proxyFrame.src = proxyURL;
                 
             } catch (error) {
                 showLoading(false);
                 showError('Error', error.message);
+            }
+        }
+
+        function copyCurrentURL() {
+            const url = urlInput.value;
+            if (!url) {
+                statusText.textContent = '⚠️ No URL to copy';
+                return;
+            }
+            navigator.clipboard.writeText(url);
+            statusText.textContent = '📋 URL copied to clipboard';
+        }
+
+        function goBack() {
+            proxyFrame.contentWindow.history.back();
+            statusText.textContent = '⬅️ Going back...';
+        }
+
+        function goForward() {
+            proxyFrame.contentWindow.history.forward();
+            statusText.textContent = '➡️ Going forward...';
+        }
+
+        function reloadPage() {
+            if (urlInput.value) {
+                loadPage();
+            } else {
+                statusText.textContent = '⚠️ No URL loaded';
             }
         }
 
@@ -439,13 +575,11 @@
             }
         });
 
-        // Focus on load
+        // Initialize
+        updateHistoryUI();
         window.addEventListener('load', () => {
             urlInput.focus();
         });
-
-        // Set initial status
-        statusText.textContent = '🚀 Ready • Enter a URL to begin unblocking';
     </script>
 </body>
 </html>
