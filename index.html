@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 11 Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen active">
+        <div class="login-container">
+            <div class="windows-logo">⊞</div>
+            <h1>Windows 11</h1>
+            <input type="password" id="passwordInput" class="password-input" placeholder="Enter password">
+            <button onclick="checkPassword()" class="login-button">Sign in</button>
+            <p class="hint">Hint: Try "password123"</p>
+        </div>
+    </div>
+
+    <!-- Desktop -->
+    <div id="desktop" class="desktop">
+        <!-- Taskbar -->
+        <div class="taskbar">
+            <div class="taskbar-content">
+                <button class="start-button" onclick="toggleStartMenu()">⊞</button>
+                <div class="taskbar-apps">
+                    <button class="taskbar-icon" onclick="minimizeAll()" title="Show Desktop">📊</button>
+                    <button class="taskbar-icon" onclick="openBrowser()" title="Browser">🌐</button>
+                    <button class="taskbar-icon" onclick="openSettings()" title="Settings">⚙️</button>
+                </div>
+                <div class="system-tray">
+                    <span id="time">12:00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Menu -->
+        <div id="startMenu" class="start-menu">
+            <div class="start-menu-header">
+                <input type="text" class="start-search" placeholder="Type here to search">
+            </div>
+            <div class="start-menu-apps">
+                <button class="start-app" onclick="openBrowser()">
+                    <span class="app-icon">🌐</span>
+                    <span class="app-name">Browser</span>
+                </button>
+                <button class="start-app" onclick="openSettings()">
+                    <span class="app-icon">⚙️</span>
+                    <span class="app-name">Settings</span>
+                </button>
+                <button class="start-app" onclick="toggleStartMenu()">
+                    <span class="app-icon">🔐</span>
+                    <span class="app-name">Lock</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Browser Window -->
+        <div id="browserWindow" class="window browser-window hidden">
+            <div class="window-header">
+                <span>Browser</span>
+                <div class="window-controls">
+                    <button onclick="minimizeWindow('browserWindow')" class="window-btn">_</button>
+                    <button onclick="maximizeWindow('browserWindow')" class="window-btn">□</button>
+                    <button onclick="closeWindow('browserWindow')" class="window-btn">✕</button>
+                </div>
+            </div>
+            <div class="browser-toolbar">
+                <input type="text" class="url-bar" id="urlBar" placeholder="Enter URL or search..." value="https://example.com">
+                <button onclick="navigateTo()" class="nav-button">Go</button>
+            </div>
+            <div class="browser-content">
+                <iframe id="browserFrame" src="https://example.com" title="Browser Content"></iframe>
+            </div>
+        </div>
+
+        <!-- Settings Window -->
+        <div id="settingsWindow" class="window settings-window hidden">
+            <div class="window-header">
+                <span>Settings</span>
+                <div class="window-controls">
+                    <button onclick="minimizeWindow('settingsWindow')" class="window-btn">_</button>
+                    <button onclick="maximizeWindow('settingsWindow')" class="window-btn">□</button>
+                    <button onclick="closeWindow('settingsWindow')" class="window-btn">✕</button>
+                </div>
+            </div>
+            <div class="settings-content">
+                <h2>System Settings</h2>
+                <div class="settings-item">
+                    <label>Theme:</label>
+                    <select onchange="changeTheme(this.value)">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+                <div class="settings-item">
+                    <label>Volume:</label>
+                    <input type="range" min="0" max="100" value="50">
+                </div>
+                <div class="settings-item">
+                    <label>Brightness:</label>
+                    <input type="range" min="0" max="100" value="100" onchange="changeBrightness(this.value)">
+                </div>
+                <button class="logout-btn" onclick="logout()">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
