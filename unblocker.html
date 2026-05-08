@@ -212,16 +212,17 @@
         /* Browser Content */
         .browser-content {
             flex: 1;
-            overflow: auto;
+            overflow: hidden;
             background: #0d0d0d;
             position: relative;
         }
 
-        .proxy-frame {
+        .proxy-content {
             width: 100%;
             height: 100%;
             border: none;
             display: block;
+            overflow: auto;
         }
 
         .loading-indicator {
@@ -334,20 +335,18 @@
             <!-- Quick Features -->
             <div class="sidebar-section">
                 <div class="sidebar-title">🚀 Quick Access</div>
-                <button class="feature-btn" onclick="loadPredefined('https://youtube.com')"><span class="feature-icon">▶️</span>YouTube</button>
-                <button class="feature-btn" onclick="loadPredefined('https://reddit.com')"><span class="feature-icon">📱</span>Reddit</button>
-                <button class="feature-btn" onclick="loadPredefined('https://twitter.com')"><span class="feature-icon">𝕏</span>Twitter/X</button>
-                <button class="feature-btn" onclick="loadPredefined('https://twitch.tv')"><span class="feature-icon">🎮</span>Twitch</button>
-                <button class="feature-btn" onclick="loadPredefined('https://discord.com')"><span class="feature-icon">💬</span>Discord</button>
-                <button class="feature-btn" onclick="loadPredefined('https://netflix.com')"><span class="feature-icon">🎬</span>Netflix</button>
+                <button class="feature-btn" onclick="loadPredefined('https://www.youtube.com')"><span class="feature-icon">▶️</span>YouTube</button>
+                <button class="feature-btn" onclick="loadPredefined('https://www.reddit.com')"><span class="feature-icon">📱</span>Reddit</button>
+                <button class="feature-btn" onclick="loadPredefined('https://x.com')"><span class="feature-icon">𝕏</span>Twitter/X</button>
+                <button class="feature-btn" onclick="loadPredefined('https://www.twitch.tv')"><span class="feature-icon">🎮</span>Twitch</button>
+                <button class="feature-btn" onclick="loadPredefined('https://www.discord.com')"><span class="feature-icon">💬</span>Discord</button>
+                <button class="feature-btn" onclick="loadPredefined('https://www.netflix.com')"><span class="feature-icon">🎬</span>Netflix</button>
             </div>
 
             <!-- Tools -->
             <div class="sidebar-section">
                 <div class="sidebar-title">⚙️ Tools</div>
                 <button class="feature-btn" onclick="copyCurrentURL()"><span class="feature-icon">📋</span>Copy URL</button>
-                <button class="feature-btn" onclick="goBack()"><span class="feature-icon">⬅️</span>Go Back</button>
-                <button class="feature-btn" onclick="goForward()"><span class="feature-icon">➡️</span>Go Forward</button>
                 <button class="feature-btn" onclick="reloadPage()"><span class="feature-icon">🔄</span>Refresh</button>
             </div>
 
@@ -365,7 +364,7 @@
                 <div class="sidebar-title">ℹ️ Info</div>
                 <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); line-height: 1.6;">
                     <p>🔓 <strong>Unblocker</strong></p>
-                    <p>Uses Allorigins public proxy API to bypass restrictions.</p>
+                    <p>Uses public proxy APIs to bypass restrictions.</p>
                     <p>📡 Fast & Reliable</p>
                 </div>
             </div>
@@ -388,7 +387,7 @@
                         type="text" 
                         class="url-input" 
                         id="urlInput" 
-                        placeholder="Enter URL (e.g., https://example.com)"
+                        placeholder="Enter URL (e.g., youtube.com or https://example.com)"
                         autocomplete="off"
                     >
                     <button class="go-btn" onclick="loadPage()">GO 🚀</button>
@@ -406,7 +405,7 @@
                     <div class="error-message" id="errorMessage"></div>
                     <button class="error-close" onclick="closeError()">Close</button>
                 </div>
-                <iframe class="proxy-frame" id="proxyFrame" title="Proxy Content"></iframe>
+                <div class="proxy-content" id="proxyContent"></div>
             </div>
 
             <!-- Status Bar -->
@@ -418,16 +417,22 @@
 
     <script>
         const urlInput = document.getElementById('urlInput');
-        const proxyFrame = document.getElementById('proxyFrame');
+        const proxyContent = document.getElementById('proxyContent');
         const loadingIndicator = document.getElementById('loadingIndicator');
         const errorContainer = document.getElementById('errorContainer');
         const errorMessage = document.getElementById('errorMessage');
         const statusText = document.getElementById('statusText');
         const historyContainer = document.getElementById('historyContainer');
 
-        // Public proxy service - Allorigins
-        const PROXY_API = 'https://api.allorigins.win/raw?url=';
+        // Multiple proxy services with fallbacks
+        const PROXIES = [
+            (url) => `https://cors-anywhere.herokuapp.com/${url}`,
+            (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+            (url) => `https://thingproxy.freeboard.io/fetch/${url}`,
+        ];
+
         let history = JSON.parse(localStorage.getItem('unblockerHistory')) || [];
+        let currentProxyIndex = 0;
 
         function formatURL(input) {
             if (!input.trim()) return '';
@@ -503,41 +508,62 @@
             showLoading(true);
             statusText.textContent = `📡 Fetching: ${url}`;
 
-            try {
-                const proxyURL = PROXY_API + encodeURIComponent(url);
-                
-                proxyFrame.src = '';
-                
-                const timeoutId = setTimeout(() => {
-                    showLoading(false);
-                    showError(
-                        'Connection Timeout',
-                        'The request took too long. Try again or use a different URL.'
-                    );
-                }, 15000);
+            loadWithProxy(url, 0);
+        }
 
-                proxyFrame.onload = () => {
-                    clearTimeout(timeoutId);
-                    showLoading(false);
-                    statusText.textContent = `✅ Loaded: ${url}`;
-                    addToHistory(url);
-                };
-
-                proxyFrame.onerror = () => {
-                    clearTimeout(timeoutId);
-                    showLoading(false);
-                    showError(
-                        'Failed to Load',
-                        'The website could not be accessed. It may be blocked or unavailable.'
-                    );
-                };
-
-                proxyFrame.src = proxyURL;
-                
-            } catch (error) {
+        function loadWithProxy(url, proxyIndex) {
+            if (proxyIndex >= PROXIES.length) {
                 showLoading(false);
-                showError('Error', error.message);
+                showError(
+                    'All Proxies Failed',
+                    'Unable to reach the website through any available proxy. The site may be heavily restricted.'
+                );
+                return;
             }
+
+            const proxyURL = PROXIES[proxyIndex](url);
+            
+            fetch(proxyURL, {
+                method: 'GET',
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.text();
+            })
+            .then(html => {
+                showLoading(false);
+                
+                // Create a sandboxed environment for the content
+                proxyContent.innerHTML = '';
+                
+                const iframe = document.createElement('iframe');
+                iframe.className = 'proxy-content';
+                iframe.sandbox.add('allow-same-origin');
+                iframe.sandbox.add('allow-scripts');
+                iframe.sandbox.add('allow-forms');
+                iframe.sandbox.add('allow-popups');
+                iframe.sandbox.add('allow-top-navigation');
+                
+                proxyContent.appendChild(iframe);
+                
+                // Modify HTML to fix relative links
+                const baseTag = `<base href="${url}">`;
+                const modifiedHTML = baseTag + html;
+                
+                iframe.contentDocument.open();
+                iframe.contentDocument.write(modifiedHTML);
+                iframe.contentDocument.close();
+                
+                statusText.textContent = `✅ Loaded: ${url}`;
+                addToHistory(url);
+            })
+            .catch(error => {
+                console.log(`Proxy ${proxyIndex + 1} failed, trying next...`);
+                loadWithProxy(url, proxyIndex + 1);
+            });
         }
 
         function copyCurrentURL() {
@@ -548,16 +574,6 @@
             }
             navigator.clipboard.writeText(url);
             statusText.textContent = '📋 URL copied to clipboard';
-        }
-
-        function goBack() {
-            proxyFrame.contentWindow.history.back();
-            statusText.textContent = '⬅️ Going back...';
-        }
-
-        function goForward() {
-            proxyFrame.contentWindow.history.forward();
-            statusText.textContent = '➡️ Going forward...';
         }
 
         function reloadPage() {
